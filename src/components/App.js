@@ -1,16 +1,43 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import Header from "./Header";
+import DogContainer from "./DogContainer";
 
 function App() {
+
+  const [dogs, setDogs] = useState([])
+  const [goodDogFilter, setGoodDogFilter] = useState(false)
+  const [selectedDog, setSelectedDog] = useState({       
+  id: 1,
+  name: "Mr. Bonkers",
+  isGoodDog: true,
+  image: "https://curriculum-content.s3.amazonaws.com/js/woof-woof/dog_1.jpg"
+})
+  
+  
+  useEffect(() => {
+    fetch('http://localhost:3001/pups')
+    .then((resp) => resp.json())
+    .then((dogData) => {
+      setDogs(dogData)
+    })
+  }, [])
+  
+  
+  console.log(selectedDog)
+  function filterDogs(){
+    if(goodDogFilter){
+      return dogs.filter((d) => d.isGoodDog)
+    } else {return dogs}
+  }
+  
+  
   return (
     <div className="App">
-      <div id="filter-div">
-        <button id="good-dog-filter">Filter good dogs: OFF</button>
-      </div>
-      <div id="dog-bar"></div>
-      <div id="dog-summary-container">
-        <h1>DOGGO:</h1>
-        <div id="dog-info"></div>
-      </div>
+      <Header setSelectedDog={setSelectedDog} dogs={filterDogs()} goodDogFilter={goodDogFilter} setGoodDogFilter={setGoodDogFilter} />
+      <DogContainer setSelectedDog={setSelectedDog} setDogs={setDogs} selectedDog={selectedDog} />
+
+      
+
     </div>
   );
 }
